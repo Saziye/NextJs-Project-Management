@@ -23,21 +23,21 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 justify-between">
             <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
+              <div className="flex flex-shrink-0 items-center">
                 <h1 className="text-xl font-bold">Proje Yönetim Sistemi</h1>
               </div>
             </div>
             <div className="flex items-center">
-              <span className="text-gray-700 mr-4">{user.email}</span>
+              <span className="mr-4 text-gray-700">{user.email}</span>
               <button
                 onClick={() => {
                   localStorage.removeItem("user")
                   router.push("/auth/login")
                 }}
-                className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
+                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
               >
                 Çıkış Yap
               </button>
@@ -46,14 +46,14 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Proje Kartları */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="overflow-hidden rounded-lg bg-white shadow">
               <div className="p-5">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
+                  <div className="flex-shrink-0 rounded-md bg-blue-500 p-3">
                     <svg
                       className="h-6 w-6 text-white"
                       fill="none"
@@ -70,11 +70,13 @@ export default function DashboardPage() {
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
+                      <dt className="truncate text-sm font-medium text-gray-500">
                         Aktif Projeler
                       </dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-gray-900">12</div>
+                        <div className="text-2xl font-semibold text-gray-900">
+                          12
+                        </div>
                       </dd>
                     </dl>
                   </div>
@@ -82,10 +84,10 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="overflow-hidden rounded-lg bg-white shadow">
               <div className="p-5">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
+                  <div className="flex-shrink-0 rounded-md bg-green-500 p-3">
                     <svg
                       className="h-6 w-6 text-white"
                       fill="none"
@@ -102,11 +104,13 @@ export default function DashboardPage() {
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
+                      <dt className="truncate text-sm font-medium text-gray-500">
                         Tamamlanan Görevler
                       </dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-gray-900">48</div>
+                        <div className="text-2xl font-semibold text-gray-900">
+                          48
+                        </div>
                       </dd>
                     </dl>
                   </div>
@@ -114,10 +118,10 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="overflow-hidden rounded-lg bg-white shadow">
               <div className="p-5">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-yellow-500 rounded-md p-3">
+                  <div className="flex-shrink-0 rounded-md bg-yellow-500 p-3">
                     <svg
                       className="h-6 w-6 text-white"
                       fill="none"
@@ -134,11 +138,13 @@ export default function DashboardPage() {
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
+                      <dt className="truncate text-sm font-medium text-gray-500">
                         Takım Üyeleri
                       </dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-gray-900">8</div>
+                        <div className="text-2xl font-semibold text-gray-900">
+                          8
+                        </div>
                       </dd>
                     </dl>
                   </div>
@@ -149,13 +155,13 @@ export default function DashboardPage() {
 
           {/* Proje Listesi */}
           <div className="mt-8">
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-medium text-gray-900">Projeler</h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+              <button className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
                 Yeni Proje
               </button>
             </div>
-            <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="overflow-hidden bg-white shadow sm:rounded-md">
               <ul className="divide-y divide-gray-200">
                 {[1, 2, 3].map((project) => (
                   <li key={project}>
@@ -163,8 +169,10 @@ export default function DashboardPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="flex-shrink-0">
-                            <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                              <span className="text-white font-medium">P{project}</span>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                              <span className="font-medium text-white">
+                                P{project}
+                              </span>
                             </div>
                           </div>
                           <div className="ml-4">
@@ -177,7 +185,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                             Aktif
                           </span>
                           <button className="text-gray-400 hover:text-gray-500">
@@ -207,4 +215,4 @@ export default function DashboardPage() {
       </main>
     </div>
   )
-} 
+}
