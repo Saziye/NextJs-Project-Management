@@ -9,7 +9,12 @@ import {
   Trello, 
   Calendar,
   Menu,
-  X
+  X,
+  Users,
+  CreditCard,
+  Clock,
+  Settings,
+  HelpCircle
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -20,19 +25,50 @@ const menuItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Todo List",
+    title: "Project",
     href: "/dashboard?tab=todo",
     icon: CheckSquare,
   },
   {
-    title: "Board",
-    href: "/dashboard?tab=board",
-    icon: Trello,
+    title: "Employee",
+    href: "/dashboard?tab=employee",
+    icon: Users,
   },
   {
-    title: "Takvim",
-    href: "/dashboard?tab=calendar",
-    icon: Calendar,
+    title: "Payroll",
+    href: "/dashboard?tab=payroll",
+    icon: CreditCard,
+  },
+]
+
+const otherItems = [
+  {
+    title: "Schedule",
+    href: "/dashboard?tab=schedule",
+    icon: Clock,
+  },
+  {
+    title: "Open Hiring",
+    href: "/dashboard?tab=hiring",
+    icon: Users,
+  },
+  {
+    title: "Integration",
+    href: "/dashboard?tab=integration",
+    icon: Trello,
+  },
+]
+
+const preferenceItems = [
+  {
+    title: "Security",
+    href: "/dashboard?tab=security",
+    icon: Settings,
+  },
+  {
+    title: "Help Center",
+    href: "/dashboard?tab=help",
+    icon: HelpCircle,
   },
 ]
 
@@ -59,40 +95,118 @@ export default function Sidebar() {
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center justify-center border-b">
-            <h1 className="text-xl font-bold">Proje Yönetimi</h1>
+          <div className="flex h-16 items-center space-x-2 px-4">
+            <div className="flex h-8 w-8 items-center justify-center rounded bg-blue-600 text-white">
+              P
+            </div>
+            <div>
+              <h1 className="text-sm font-semibold">Perfect Pixelz</h1>
+              <p className="text-xs text-gray-500">Premium Plan</p>
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="px-4 py-2">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full rounded-md border border-gray-200 bg-gray-50 py-1.5 pl-8 pr-4 text-sm focus:outline-none"
+              />
+              <span className="absolute left-2.5 top-2 text-gray-400">⌘K</span>
+            </div>
           </div>
 
           {/* Menu Items */}
-          <nav className="flex-1 space-y-1 px-2 py-4">
-            {menuItems.map((item) => {
-              const isActive = pathname + window.location.search === item.href
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  )}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.title}
-                </Link>
-              )
-            })}
-          </nav>
+          <div className="flex-1 overflow-y-auto px-4 py-2">
+            <div className="mb-6">
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">GENERAL</h2>
+              <nav className="space-y-1">
+                {menuItems.map((item) => {
+                  const isActive = pathname + window.location.search === item.href
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center rounded-lg px-2 py-1.5 text-sm transition-colors",
+                        isActive
+                          ? "bg-gray-100 text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      )}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.title}
+                    </Link>
+                  )
+                })}
+              </nav>
+            </div>
 
-          {/* User Profile */}
-          <div className="border-t p-4">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-gray-200" />
-              <div className="ml-3">
-                <p className="text-sm font-medium">Kullanıcı</p>
-                <p className="text-xs text-gray-500">user@example.com</p>
+            <div className="mb-6">
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">OTHERS</h2>
+              <nav className="space-y-1">
+                {otherItems.map((item) => {
+                  const isActive = pathname + window.location.search === item.href
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center rounded-lg px-2 py-1.5 text-sm transition-colors",
+                        isActive
+                          ? "bg-gray-100 text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      )}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.title}
+                    </Link>
+                  )
+                })}
+              </nav>
+            </div>
+
+            <div className="mb-6">
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">PREFERENCES</h2>
+              <nav className="space-y-1">
+                {preferenceItems.map((item) => {
+                  const isActive = pathname + window.location.search === item.href
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center rounded-lg px-2 py-1.5 text-sm transition-colors",
+                        isActive
+                          ? "bg-gray-100 text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      )}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.title}
+                    </Link>
+                  )
+                })}
+              </nav>
+            </div>
+          </div>
+
+          {/* Upgrade Banner */}
+          <div className="mt-auto border-t p-4">
+            <div className="rounded-lg bg-gray-50 p-4">
+              <div className="mb-2 flex items-center justify-center">
+                <div className="rounded-full bg-blue-600 p-1">
+                  <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
               </div>
+              <h3 className="text-center text-sm font-medium">Up To Enterprise</h3>
+              <p className="mt-1 text-center text-xs text-gray-500">Get full access to all features...</p>
+              <button className="mt-3 w-full rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">
+                Upgrade Now
+              </button>
             </div>
           </div>
         </div>
