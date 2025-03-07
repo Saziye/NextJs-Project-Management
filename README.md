@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Proje Yönetim Sistemi
 
-## Getting Started
+Modern ve kullanıcı dostu bir proje yönetim sistemi. Görev takibi, ekip yönetimi ve proje ilerlemesi için kapsamlı bir çözüm.
 
-First, run the development server:
+## 🚀 Özellikler
 
+- 📋 Görev yönetimi ve organizasyonu
+- 👥 Ekip üyeleri atama ve yönetimi
+- 🎯 Öncelik seviyeli görev takibi
+- 📅 Başlangıç ve bitiş tarihi planlaması
+- 🌤️ Hava durumu entegrasyonu
+- 📱 Mobil uyumlu tasarım
+- 🔄 Sürükle-bırak görev düzenleme
+- 🎨 Modern ve minimalist arayüz
+
+## 🛠️ Teknolojiler
+
+- **Frontend Framework:** Next.js 14
+- **Stil Kütüphanesi:** Tailwind CSS
+- **Durum Yönetimi:** React Hooks
+- **Form Yönetimi:** React Hook Form
+- **Veri Doğrulama:** Zod
+- **Sürükle-Bırak:** @hello-pangea/dnd
+- **İkonlar:** Lucide React
+- **HTTP İstekleri:** Axios
+- **API Yönetimi:** TanStack Query
+- **Tip Güvenliği:** TypeScript
+
+## 📦 Kurulum
+
+1. Projeyi klonlayın:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/project-management.git
+cd project-management
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Bağımlılıkları yükleyin:
+```bash
+npm install
+# veya
+yarn install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. `.env.local` dosyasını oluşturun:
+```env
+NEXT_PUBLIC_OPENWEATHER_API_KEY=your_api_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Geliştirme sunucusunu başlatın:
+```bash
+npm run dev
+# veya
+yarn dev
+```
 
-## Learn More
+5. Tarayıcınızda http://localhost:3000 adresini açın
 
-To learn more about Next.js, take a look at the following resources:
+## 🔧 Yapılandırma
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **ESLint:** JavaScript/TypeScript kod kalitesi kontrolü
+- **Prettier:** Kod formatlaması
+- **Tailwind:** UI bileşenleri ve stil yönetimi
+- **TypeScript:** Tip güvenliği ve geliştirici deneyimi
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🌟 Yapılabilecek Geliştirmeler
 
-## Deploy on Vercel
+### Kimlik Doğrulama ve Yetkilendirme
+- [ ] JWT tabanlı kimlik doğrulama sistemi
+- [ ] Rol tabanlı yetkilendirme (Admin, Takım Lideri, Üye)
+- [ ] OAuth entegrasyonu (Google, GitHub)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Görev Yönetimi
+- [ ] Görev şablonları oluşturma
+- [ ] Tekrarlanan görevler için otomasyon
+- [ ] Görev bağımlılıkları ve ilişkileri
+- [ ] Görev etiketleme sistemi
+- [ ] Dosya ekleme ve yönetimi
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Ekip İşbirliği
+- [ ] Gerçek zamanlı bildirimler
+- [ ] Görev yorumları ve tartışmalar
+- [ ] Ekip üyeleri arasında mesajlaşma
+- [ ] Görev aktivite geçmişi
+
+### Raporlama ve Analitik
+- [ ] Görev tamamlanma istatistikleri
+- [ ] Ekip performans metrikleri
+- [ ] Zaman takibi ve raporlama
+- [ ] Özelleştirilebilir dashboard'lar
+
+### Kullanıcı Deneyimi
+- [ ] Karanlık mod desteği
+- [ ] Özelleştirilebilir tema seçenekleri
+- [ ] Klavye kısayolları
+- [ ] Offline çalışma desteği
+- [ ] Daha gelişmiş filtreleme ve arama özellikleri
+
+### Entegrasyonlar
+- [ ] Calendar entegrasyonu (Google Calendar, Outlook)
+- [ ] Slack/Discord entegrasyonu
+- [ ] Email bildirimleri
+- [ ] CI/CD pipeline entegrasyonu
+
+### Performans ve Ölçeklendirme
+- [ ] Server-side rendering optimizasyonu
+- [ ] Image optimizasyonu
+- [ ] Code splitting ve lazy loading
+- [ ] API önbellekleme stratejileri
+
+### Güvenlik
+- [ ] Rate limiting
+- [ ] Input validasyonu ve sanitizasyonu
+- [ ] CSRF koruması
+- [ ] Güvenli oturum yönetimi
+
+## 📝 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakınız.
+
+## 👥 Katkıda Bulunma
+
+1. Bu projeyi fork edin
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'feat: Add amazing feature'`)
+4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
