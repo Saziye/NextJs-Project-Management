@@ -29,12 +29,14 @@ Modern ve kullanıcı dostu bir proje yönetim sistemi. Görev takibi, ekip yön
 ## 📦 Kurulum
 
 1. Projeyi klonlayın:
+
 ```bash
 git clone https://github.com/your-username/project-management.git
 cd project-management
 ```
 
 2. Bağımlılıkları yükleyin:
+
 ```bash
 npm install
 # veya
@@ -42,11 +44,13 @@ yarn install
 ```
 
 3. `.env.local` dosyasını oluşturun:
+
 ```env
 NEXT_PUBLIC_OPENWEATHER_API_KEY=your_api_key
 ```
 
 4. Geliştirme sunucusunu başlatın:
+
 ```bash
 npm run dev
 # veya
@@ -65,11 +69,13 @@ yarn dev
 ## 🌟 Yapılabilecek Geliştirmeler
 
 ### Kimlik Doğrulama ve Yetkilendirme
+
 - [ ] JWT tabanlı kimlik doğrulama sistemi
 - [ ] Rol tabanlı yetkilendirme (Admin, Takım Lideri, Üye)
 - [ ] OAuth entegrasyonu (Google, GitHub)
 
 ### Görev Yönetimi
+
 - [ ] Görev şablonları oluşturma
 - [ ] Tekrarlanan görevler için otomasyon
 - [ ] Görev bağımlılıkları ve ilişkileri
@@ -77,18 +83,21 @@ yarn dev
 - [ ] Dosya ekleme ve yönetimi
 
 ### Ekip İşbirliği
+
 - [ ] Gerçek zamanlı bildirimler
 - [ ] Görev yorumları ve tartışmalar
 - [ ] Ekip üyeleri arasında mesajlaşma
 - [ ] Görev aktivite geçmişi
 
 ### Raporlama ve Analitik
+
 - [ ] Görev tamamlanma istatistikleri
 - [ ] Ekip performans metrikleri
 - [ ] Zaman takibi ve raporlama
 - [ ] Özelleştirilebilir dashboard'lar
 
 ### Kullanıcı Deneyimi
+
 - [ ] Karanlık mod desteği
 - [ ] Özelleştirilebilir tema seçenekleri
 - [ ] Klavye kısayolları
@@ -96,18 +105,21 @@ yarn dev
 - [ ] Daha gelişmiş filtreleme ve arama özellikleri
 
 ### Entegrasyonlar
+
 - [ ] Calendar entegrasyonu (Google Calendar, Outlook)
 - [ ] Slack/Discord entegrasyonu
 - [ ] Email bildirimleri
 - [ ] CI/CD pipeline entegrasyonu
 
 ### Performans ve Ölçeklendirme
+
 - [ ] Server-side rendering optimizasyonu
 - [ ] Image optimizasyonu
 - [ ] Code splitting ve lazy loading
 - [ ] API önbellekleme stratejileri
 
 ### Güvenlik
+
 - [ ] Rate limiting
 - [ ] Input validasyonu ve sanitizasyonu
 - [ ] CSRF koruması

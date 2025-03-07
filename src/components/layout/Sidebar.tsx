@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { 
-  LayoutDashboard, 
-  CheckSquare, 
-  Trello, 
+import { usePathname, useSearchParams } from "next/navigation"
+import {
+  LayoutDashboard,
+  CheckSquare,
+  Trello,
   Calendar,
   Menu,
   X,
@@ -14,7 +14,7 @@ import {
   CreditCard,
   Clock,
   Settings,
-  HelpCircle
+  HelpCircle,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -74,7 +74,14 @@ const preferenceItems = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const getIsActive = (href: string) => {
+    const [path, query] = href.split("?")
+    if (!query) return pathname === href
+    return pathname === path && searchParams.get("tab") === new URLSearchParams(query).get("tab")
+  }
 
   return (
     <>
@@ -120,10 +127,12 @@ export default function Sidebar() {
           {/* Menu Items */}
           <div className="flex-1 overflow-y-auto px-4 py-2">
             <div className="mb-6">
-              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">GENERAL</h2>
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">
+                GENERAL
+              </h2>
               <nav className="space-y-1">
                 {menuItems.map((item) => {
-                  const isActive = pathname + window.location.search === item.href
+                  const isActive = getIsActive(item.href)
                   return (
                     <Link
                       key={item.href}
@@ -144,10 +153,12 @@ export default function Sidebar() {
             </div>
 
             <div className="mb-6">
-              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">OTHERS</h2>
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">
+                OTHERS
+              </h2>
               <nav className="space-y-1">
                 {otherItems.map((item) => {
-                  const isActive = pathname + window.location.search === item.href
+                  const isActive = getIsActive(item.href)
                   return (
                     <Link
                       key={item.href}
@@ -168,10 +179,12 @@ export default function Sidebar() {
             </div>
 
             <div className="mb-6">
-              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">PREFERENCES</h2>
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase text-gray-400">
+                PREFERENCES
+              </h2>
               <nav className="space-y-1">
                 {preferenceItems.map((item) => {
-                  const isActive = pathname + window.location.search === item.href
+                  const isActive = getIsActive(item.href)
                   return (
                     <Link
                       key={item.href}
@@ -197,13 +210,27 @@ export default function Sidebar() {
             <div className="rounded-lg bg-gray-50 p-4">
               <div className="mb-2 flex items-center justify-center">
                 <div className="rounded-full bg-blue-600 p-1">
-                  <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="h-4 w-4 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
               </div>
-              <h3 className="text-center text-sm font-medium">Up To Enterprise</h3>
-              <p className="mt-1 text-center text-xs text-gray-500">Get full access to all features...</p>
+              <h3 className="text-center text-sm font-medium">
+                Up To Enterprise
+              </h3>
+              <p className="mt-1 text-center text-xs text-gray-500">
+                Get full access to all features...
+              </p>
               <button className="mt-3 w-full rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">
                 Upgrade Now
               </button>
@@ -221,4 +248,4 @@ export default function Sidebar() {
       )}
     </>
   )
-} 
+}

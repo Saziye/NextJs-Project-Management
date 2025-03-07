@@ -71,7 +71,7 @@ export default function LoginPage() {
 
   const getWeatherBackground = () => {
     if (!weather) return "from-blue-400 to-purple-500"
-    
+
     const weatherMain = weather.weather[0].main.toLowerCase()
     switch (weatherMain) {
       case "clear":
@@ -88,7 +88,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={`flex min-h-screen items-center justify-center bg-gradient-to-r ${getWeatherBackground()}`}>
+    <div
+      className={`flex min-h-screen items-center justify-center bg-gradient-to-r ${getWeatherBackground()}`}
+    >
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
         {weather && !weatherLoading && (
           <div className="mb-6 text-center">
@@ -99,18 +101,27 @@ export default function LoginPage() {
                 className="h-16 w-16"
               />
               <div className="ml-2 text-left">
-                <p className="text-2xl font-bold">{Math.round(weather.main.temp)}°C</p>
-                <p className="text-sm text-gray-600 capitalize">{weather.weather[0].description}</p>
+                <p className="text-2xl font-bold">
+                  {Math.round(weather.main.temp)}°C
+                </p>
+                <p className="text-sm capitalize text-gray-600">
+                  {weather.weather[0].description}
+                </p>
                 <p className="text-xs text-gray-500">{weather.name}</p>
               </div>
             </div>
           </div>
         )}
-        
-        <h2 className="mb-6 text-center text-2xl font-bold">Proje Yönetim Sistemi</h2>
+
+        <h2 className="mb-6 text-center text-2xl font-bold">
+          Proje Yönetim Sistemi
+        </h2>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -126,7 +137,10 @@ export default function LoginPage() {
             )}
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Şifre
             </label>
             <input

@@ -11,4 +11,4 @@ export interface WeatherData {
     humidity: number
   }
   name: string
-} 
+}
