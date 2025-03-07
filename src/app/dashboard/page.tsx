@@ -1,11 +1,47 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import Sidebar from "@/components/layout/Sidebar"
+import { ChevronRight, Home } from "lucide-react"
+import Link from "next/link"
+import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DropResult } from "@hello-pangea/dnd"
+import { cn } from "@/lib/utils"
+
+type Task = {
+  id: string
+  title: string
+  description: string
+  status: "todo" | "in-progress" | "done"
+}
+
+const initialTasks: Task[] = [
+  {
+    id: "1",
+    title: "Login sayfası tasarımı",
+    description: "Kullanıcı girişi için modern bir arayüz tasarlanacak",
+    status: "todo",
+  },
+  {
+    id: "2",
+    title: "API entegrasyonu",
+    description: "Backend servisleri ile bağlantı kurulacak",
+    status: "in-progress",
+  },
+  {
+    id: "3",
+    title: "Test yazımı",
+    description: "Birim testleri ve entegrasyon testleri yazılacak",
+    status: "done",
+  },
+]
 
 export default function DashboardPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [user, setUser] = useState<{ email: string } | null>(null)
+  const [tasks, setTasks] = useState<Task[]>(initialTasks)
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "todo")
 
   useEffect(() => {
     const userStr = localStorage.getItem("user")
@@ -16,203 +52,182 @@ export default function DashboardPage() {
     setUser(JSON.parse(userStr))
   }, [router])
 
-  if (!user) {
-    return null
+  useEffect(() => {
+    const tab = searchParams.get("tab")
+    if (tab) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
+
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return
+
+    const { source, destination } = result
+    const updatedTasks = Array.from(tasks)
+    const [movedTask] = updatedTasks.splice(source.index, 1)
+
+    // Status değişikliği
+    if (source.droppableId !== destination.droppableId) {
+      movedTask.status = destination.droppableId as "todo" | "in-progress" | "done"
+    }
+
+    // Yeni pozisyon
+    updatedTasks.splice(destination.index, 0, movedTask)
+    setTasks(updatedTasks)
   }
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex">
-              <div className="flex flex-shrink-0 items-center">
-                <h1 className="text-xl font-bold">Proje Yönetim Sistemi</h1>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <span className="mr-4 text-gray-700">{user.email}</span>
-              <button
-                onClick={() => {
-                  localStorage.removeItem("user")
-                  router.push("/auth/login")
-                }}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-              >
-                Çıkış Yap
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+  if (!user) return null
 
-      <main className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Proje Kartları */}
-            <div className="overflow-hidden rounded-lg bg-white shadow">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 rounded-md bg-blue-500 p-3">
-                    <svg
-                      className="h-6 w-6 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="truncate text-sm font-medium text-gray-500">
-                        Aktif Projeler
-                      </dt>
-                      <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-gray-900">
-                          12
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="overflow-hidden rounded-lg bg-white shadow">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 rounded-md bg-green-500 p-3">
-                    <svg
-                      className="h-6 w-6 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="truncate text-sm font-medium text-gray-500">
-                        Tamamlanan Görevler
-                      </dt>
-                      <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-gray-900">
-                          48
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="overflow-hidden rounded-lg bg-white shadow">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 rounded-md bg-yellow-500 p-3">
-                    <svg
-                      className="h-6 w-6 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="truncate text-sm font-medium text-gray-500">
-                        Takım Üyeleri
-                      </dt>
-                      <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-gray-900">
-                          8
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Proje Listesi */}
-          <div className="mt-8">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-medium text-gray-900">Projeler</h2>
-              <button className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
-                Yeni Proje
-              </button>
-            </div>
-            <div className="overflow-hidden bg-white shadow sm:rounded-md">
-              <ul className="divide-y divide-gray-200">
-                {[1, 2, 3].map((project) => (
-                  <li key={project}>
-                    <div className="px-4 py-4 sm:px-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
-                              <span className="font-medium text-white">
-                                P{project}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="ml-4">
-                            <h3 className="text-sm font-medium text-gray-900">
-                              Proje {project}
-                            </h3>
+  const renderTodoList = () => (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="space-y-6">
+        {["todo", "in-progress", "done"].map((status) => (
+          <div key={status} className="rounded-lg bg-gray-50 p-4">
+            <h3 className="mb-4 text-lg font-medium capitalize">
+              {status === "todo"
+                ? "Yapılacaklar"
+                : status === "in-progress"
+                ? "Devam Edenler"
+                : "Tamamlananlar"}
+            </h3>
+            <Droppable droppableId={status}>
+              {(provided: DroppableProvided) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="space-y-2"
+                >
+                  {tasks
+                    .filter((task) => task.status === status)
+                    .map((task, index) => (
+                      <Draggable
+                        key={task.id}
+                        draggableId={task.id}
+                        index={index}
+                      >
+                        {(provided: DraggableProvided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className="rounded-md bg-white p-4 shadow"
+                          >
+                            <h4 className="font-medium">{task.title}</h4>
                             <p className="text-sm text-gray-500">
-                              Proje açıklaması burada yer alacak
+                              {task.description}
                             </p>
                           </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                            Aktif
-                          </span>
-                          <button className="text-gray-400 hover:text-gray-500">
-                            <svg
-                              className="h-5 w-5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                        )}
+                      </Draggable>
+                    ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
+        ))}
+      </div>
+    </DragDropContext>
+  )
+
+  const renderBoard = () => (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {["todo", "in-progress", "done"].map((status) => (
+        <div key={status} className="rounded-lg bg-gray-50 p-4">
+          <h3 className="mb-4 text-lg font-medium capitalize">
+            {status === "todo"
+              ? "Yapılacaklar"
+              : status === "in-progress"
+              ? "Devam Edenler"
+              : "Tamamlananlar"}
+          </h3>
+          <div className="space-y-2">
+            {tasks
+              .filter((task) => task.status === status)
+              .map((task) => (
+                <div
+                  key={task.id}
+                  className="rounded-md bg-white p-4 shadow"
+                >
+                  <h4 className="font-medium">{task.title}</h4>
+                  <p className="text-sm text-gray-500">{task.description}</p>
+                </div>
+              ))}
           </div>
         </div>
-      </main>
+      ))}
+    </div>
+  )
+
+  const renderCalendar = () => (
+    <div className="rounded-lg bg-white p-6 shadow">
+      <div className="mb-4 grid grid-cols-7 gap-2">
+        {["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map((day) => (
+          <div key={day} className="text-center font-medium">
+            {day}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-2">
+        {Array.from({ length: 35 }).map((_, i) => (
+          <div
+            key={i}
+            className="aspect-square rounded border p-2 text-center hover:bg-gray-50"
+          >
+            {i + 1}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <div className="flex-1 pl-60">
+        <div className="p-8">
+          {/* Breadcrumb */}
+          <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600">
+            <Link href="/dashboard" className="flex items-center hover:text-gray-900">
+              <Home className="mr-2 h-4 w-4" />
+              Dashboard
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="capitalize">{activeTab}</span>
+          </div>
+
+          {/* Tabs */}
+          <div className="mb-6 border-b">
+            <nav className="-mb-px flex space-x-8">
+              {["todo", "board", "calendar"].map((tab) => (
+                <Link
+                  key={tab}
+                  href={`/dashboard?tab=${tab}`}
+                  className={cn(
+                    "border-b-2 px-1 pb-4 text-sm font-medium",
+                    activeTab === tab
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  )}
+                >
+                  {tab === "todo"
+                    ? "Todo List"
+                    : tab === "board"
+                    ? "Board"
+                    : "Takvim"}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Tab Content */}
+          <div className="mt-6">
+            {activeTab === "todo" && renderTodoList()}
+            {activeTab === "board" && renderBoard()}
+            {activeTab === "calendar" && renderCalendar()}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
