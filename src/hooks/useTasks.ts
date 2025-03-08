@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Task } from "@/types/task"
 
 interface UseTasksProps {
@@ -6,17 +6,60 @@ interface UseTasksProps {
   initialCompletedTasks: Task[]
 }
 
-export const useTasks = ({
-  initialTasks,
-  initialCompletedTasks,
-}: UseTasksProps) => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks)
-  const [completedTasks, setCompletedTasks] = useState<Task[]>(
-    initialCompletedTasks
-  )
-  const [expandedTasks, setExpandedTasks] = useState<{
-    [key: string]: boolean
-  }>({})
+const STORAGE_KEYS = {
+  TASKS: "tasks",
+  COMPLETED_TASKS: "completedTasks",
+  EXPANDED_TASKS: "expandedTasks"
+}
+
+// Tarayıcı ortamında olup olmadığımızı kontrol eden yardımcı fonksiyon
+const isBrowser = typeof window !== "undefined"
+
+// localStorage'a güvenli erişim için yardımcı fonksiyonlar
+const getStorageItem = (key: string) => {
+  if (!isBrowser) return null
+  return localStorage.getItem(key)
+}
+
+const setStorageItem = (key: string, value: string) => {
+  if (!isBrowser) return
+  localStorage.setItem(key, value)
+}
+
+const removeStorageItem = (key: string) => {
+  if (!isBrowser) return
+  localStorage.removeItem(key)
+}
+
+export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps) => {
+  // localStorage'dan verileri al veya varsayılan değerleri kullan
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const savedTasks = getStorageItem(STORAGE_KEYS.TASKS)
+    return savedTasks ? JSON.parse(savedTasks) : initialTasks
+  })
+
+  const [completedTasks, setCompletedTasks] = useState<Task[]>(() => {
+    const savedCompletedTasks = getStorageItem(STORAGE_KEYS.COMPLETED_TASKS)
+    return savedCompletedTasks ? JSON.parse(savedCompletedTasks) : initialCompletedTasks
+  })
+
+  const [expandedTasks, setExpandedTasks] = useState<{ [key: string]: boolean }>(() => {
+    const savedExpandedTasks = getStorageItem(STORAGE_KEYS.EXPANDED_TASKS)
+    return savedExpandedTasks ? JSON.parse(savedExpandedTasks) : {}
+  })
+
+  // Değişiklikleri localStorage'a kaydet
+  useEffect(() => {
+    setStorageItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks))
+  }, [tasks])
+
+  useEffect(() => {
+    setStorageItem(STORAGE_KEYS.COMPLETED_TASKS, JSON.stringify(completedTasks))
+  }, [completedTasks])
+
+  useEffect(() => {
+    setStorageItem(STORAGE_KEYS.EXPANDED_TASKS, JSON.stringify(expandedTasks))
+  }, [expandedTasks])
 
   const toggleTaskExpansion = (taskId: string) => {
     setExpandedTasks((prev) => ({
@@ -25,30 +68,114 @@ export const useTasks = ({
     }))
   }
 
-  const addTask = (task: Task) => {
-    setTasks((prev) => [...prev, task])
+  const addTask = (taskData: Omit<Task, "id" | "createdAt" | "updatedAt" | "createdBy">) => {
+    const now = new Date().toISOString()
+    const createdBy = {
+      id: "1",
+      name: "Ali Yılmaz",
+      avatar: "https://i.pravatar.cc/150?img=1"
+    }
+
+    // Alt görevleri ana görevin subTasks özelliğine ekle
+    const subTasks = taskData.subTasks?.map(subTask => ({
+      ...subTask,
+      id: Math.random().toString(36).substr(2, 9),
+      status: "progress" as const,
+      createdAt: now,
+      updatedAt: now,
+      createdBy
+    })) as Task[] | undefined
+
+    const newTask: Task = {
+      ...taskData,
+      id: Math.random().toString(36).substr(2, 9),
+      status: "progress",
+      createdAt: now,
+      updatedAt: now,
+      createdBy,
+      subTasks
+    }
+
+    // Yeni görevi ekledikten sonra otomatik olarak genişlet
+    setExpandedTasks((prev) => ({
+      ...prev,
+      [newTask.id]: true
+    }))
+
+    setTasks((prevTasks) => [...prevTasks, newTask])
   }
 
-  const updateTask = (taskId: string, updates: Partial<Task>) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
+  const updateTask = (taskId: string, data: Partial<Task>) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => {
+        // Alt görevleri kontrol et
+        if (task.subTasks?.some(subTask => subTask.id === taskId)) {
+          // Alt görev güncelleniyor
+          return {
+            ...task,
+            subTasks: task.subTasks.map(subTask =>
+              subTask.id === taskId
+                ? { ...subTask, ...data }
+                : subTask
+            ),
+            updatedAt: new Date().toISOString()
+          }
+        }
+        
+        // Ana görev güncelleniyor
+        if (task.id === taskId) {
+          return { ...task, ...data }
+        }
+
+        return task
+      })
     )
   }
 
   const deleteTask = (taskId: string) => {
-    setTasks((prev) => prev.filter((task) => task.id !== taskId))
+    setTasks((prevTasks) => {
+      return prevTasks.map(task => {
+        // Alt görevleri kontrol et
+        if (task.subTasks?.some(subTask => subTask.id === taskId)) {
+          // Alt görev siliniyorsa, ana görevin alt görevlerini güncelle
+          return {
+            ...task,
+            subTasks: task.subTasks.filter(subTask => subTask.id !== taskId),
+            updatedAt: new Date().toISOString()
+          }
+        }
+        
+        // Ana görev siliniyorsa
+        if (task.id === taskId) {
+          return null
+        }
+
+        return task
+      }).filter((task): task is Task => task !== null)
+    })
   }
 
   const moveTaskToCompleted = (taskId: string) => {
-    const task = tasks.find((t) => t.id === taskId)
-    if (task) {
-      setTasks((prev) => prev.filter((t) => t.id !== taskId))
-      setCompletedTasks((prev) => [...prev, { ...task, status: "completed" }])
+    const taskToMove = tasks.find((task) => task.id === taskId)
+    if (taskToMove) {
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId))
+      setCompletedTasks((prevCompleted) => [...prevCompleted, { ...taskToMove, status: "completed" }])
     }
   }
 
   const deleteCompletedTask = (taskId: string) => {
-    setCompletedTasks((prev) => prev.filter((task) => task.id !== taskId))
+    setCompletedTasks((prevCompleted) =>
+      prevCompleted.filter((task) => task.id !== taskId)
+    )
+  }
+
+  const clearStorage = () => {
+    removeStorageItem(STORAGE_KEYS.TASKS)
+    removeStorageItem(STORAGE_KEYS.COMPLETED_TASKS)
+    removeStorageItem(STORAGE_KEYS.EXPANDED_TASKS)
+    setTasks(initialTasks)
+    setCompletedTasks(initialCompletedTasks)
+    setExpandedTasks({})
   }
 
   return {
@@ -61,5 +188,6 @@ export const useTasks = ({
     deleteTask,
     moveTaskToCompleted,
     deleteCompletedTask,
+    clearStorage,
   }
 }

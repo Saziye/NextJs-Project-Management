@@ -11,7 +11,10 @@ import { TaskList } from "@/components/organisms/TaskList/TaskList"
 import { AvatarGroup } from "@/components/molecules/AvatarGroup/AvatarGroup"
 import { Button } from "@/components/atoms/Button/Button"
 import { useTasks } from "@/hooks/useTasks"
-import { initialTasks, completedTasks } from "@/data/tasks"
+import { Task } from "@/types/task"
+
+const initialTasks: Task[] = []
+const completedTasks: Task[] = []
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -23,16 +26,22 @@ export default function DashboardPage() {
     completedTasks: completedTasksList,
     expandedTasks,
     toggleTaskExpansion,
+    addTask,
+    updateTask,
+    moveTaskToCompleted,
     deleteCompletedTask,
+    deleteTask,
   } = useTasks({
     initialTasks,
     initialCompletedTasks: completedTasks,
   })
 
   useEffect(() => {
-    const userStr = localStorage.getItem("user")
-    if (!userStr) {
-      router.push("/auth/login")
+    if (typeof window !== "undefined") {
+      const userStr = localStorage.getItem("user")
+      if (!userStr) {
+        router.push("/auth/login")
+      }
     }
   }, [router])
 
@@ -105,13 +114,17 @@ export default function DashboardPage() {
           {/* Content */}
           <div className="mt-6 space-y-8">
             {activeTab === "todo" ? (
-              <>
+              <div className="grid grid-cols-1 gap-6">
                 <TaskList
                   title="Progress"
                   tasks={tasks}
                   count={tasks.length}
                   expandedTasks={expandedTasks}
                   onToggleExpand={toggleTaskExpansion}
+                  onCreateTask={addTask}
+                  onUpdateTask={updateTask}
+                  onMoveTask={moveTaskToCompleted}
+                  onDeleteTask={deleteTask}
                 />
                 <TaskList
                   title="Completed"
@@ -122,7 +135,7 @@ export default function DashboardPage() {
                   onToggleExpand={toggleTaskExpansion}
                   onDeleteTask={deleteCompletedTask}
                 />
-              </>
+              </div>
             ) : activeTab === "board" ? (
               <div>Board View</div>
             ) : (
