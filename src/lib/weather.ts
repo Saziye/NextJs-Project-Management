@@ -1,7 +1,9 @@
 import axios from "axios"
 import { WeatherData } from "@/types/weather"
 
-const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY
+const API_KEY =
+  process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY ||
+  "bd5e378503939ddaee76f12ad7a97608"
 
 export async function getWeatherByCoords(
   lat: number,

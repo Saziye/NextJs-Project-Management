@@ -12,13 +12,13 @@ export const taskTemplates: TaskTemplate[] = [
       {
         id: "1",
         name: "Ali Yılmaz",
-        avatar: "https://i.pravatar.cc/150?img=1"
+        avatar: "https://i.pravatar.cc/150?img=1",
       },
       {
         id: "2",
         name: "Ayşe Demir",
-        avatar: "https://i.pravatar.cc/150?img=2"
-      }
+        avatar: "https://i.pravatar.cc/150?img=2",
+      },
     ],
     subTaskTemplates: [
       {
@@ -31,9 +31,9 @@ export const taskTemplates: TaskTemplate[] = [
           {
             id: "2",
             name: "Ayşe Demir",
-            avatar: "https://i.pravatar.cc/150?img=2"
-          }
-        ]
+            avatar: "https://i.pravatar.cc/150?img=2",
+          },
+        ],
       },
       {
         id: "1-2",
@@ -45,11 +45,11 @@ export const taskTemplates: TaskTemplate[] = [
           {
             id: "1",
             name: "Ali Yılmaz",
-            avatar: "https://i.pravatar.cc/150?img=1"
-          }
-        ]
-      }
-    ]
+            avatar: "https://i.pravatar.cc/150?img=1",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "2",
@@ -62,8 +62,8 @@ export const taskTemplates: TaskTemplate[] = [
       {
         id: "2",
         name: "Ayşe Demir",
-        avatar: "https://i.pravatar.cc/150?img=2"
-      }
+        avatar: "https://i.pravatar.cc/150?img=2",
+      },
     ],
     subTaskTemplates: [
       {
@@ -76,9 +76,9 @@ export const taskTemplates: TaskTemplate[] = [
           {
             id: "2",
             name: "Ayşe Demir",
-            avatar: "https://i.pravatar.cc/150?img=2"
-          }
-        ]
+            avatar: "https://i.pravatar.cc/150?img=2",
+          },
+        ],
       },
       {
         id: "2-2",
@@ -90,11 +90,11 @@ export const taskTemplates: TaskTemplate[] = [
           {
             id: "2",
             name: "Ayşe Demir",
-            avatar: "https://i.pravatar.cc/150?img=2"
-          }
-        ]
-      }
-    ]
+            avatar: "https://i.pravatar.cc/150?img=2",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "3",
@@ -107,8 +107,8 @@ export const taskTemplates: TaskTemplate[] = [
       {
         id: "3",
         name: "Mehmet Kaya",
-        avatar: "https://i.pravatar.cc/150?img=3"
-      }
+        avatar: "https://i.pravatar.cc/150?img=3",
+      },
     ],
     subTaskTemplates: [
       {
@@ -121,9 +121,9 @@ export const taskTemplates: TaskTemplate[] = [
           {
             id: "3",
             name: "Mehmet Kaya",
-            avatar: "https://i.pravatar.cc/150?img=3"
-          }
-        ]
+            avatar: "https://i.pravatar.cc/150?img=3",
+          },
+        ],
       },
       {
         id: "3-2",
@@ -135,10 +135,10 @@ export const taskTemplates: TaskTemplate[] = [
           {
             id: "2",
             name: "Ayşe Demir",
-            avatar: "https://i.pravatar.cc/150?img=2"
-          }
-        ]
-      }
-    ]
-  }
-] 
+            avatar: "https://i.pravatar.cc/150?img=2",
+          },
+        ],
+      },
+    ],
+  },
+]

@@ -135,24 +135,27 @@ export const TaskTemplateModal = ({
                           Şablonu Kullan
                         </Button>
                       </div>
-                      {template.subTaskTemplates && template.subTaskTemplates.length > 0 && (
-                        <div className="mt-4 border-t pt-4">
-                          <h4 className="mb-2 text-sm font-medium">Alt Görevler</h4>
-                          <ul className="space-y-2">
-                            {template.subTaskTemplates.map((subTask) => (
-                              <li
-                                key={subTask.id}
-                                className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 text-sm"
-                              >
-                                <span>{subTask.name}</span>
-                                <span className="text-gray-500">
-                                  {subTask.defaultDuration} gün
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                      {template.subTaskTemplates &&
+                        template.subTaskTemplates.length > 0 && (
+                          <div className="mt-4 border-t pt-4">
+                            <h4 className="mb-2 text-sm font-medium">
+                              Alt Görevler
+                            </h4>
+                            <ul className="space-y-2">
+                              {template.subTaskTemplates.map((subTask) => (
+                                <li
+                                  key={subTask.id}
+                                  className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 text-sm"
+                                >
+                                  <span>{subTask.name}</span>
+                                  <span className="text-gray-500">
+                                    {subTask.defaultDuration} gün
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                     </div>
                   ))}
                 </div>
@@ -163,4 +166,4 @@ export const TaskTemplateModal = ({
       </Dialog>
     </Transition>
   )
-} 
+}

@@ -9,7 +9,7 @@ interface UseTasksProps {
 const STORAGE_KEYS = {
   TASKS: "tasks",
   COMPLETED_TASKS: "completedTasks",
-  EXPANDED_TASKS: "expandedTasks"
+  EXPANDED_TASKS: "expandedTasks",
 }
 
 // Tarayıcı ortamında olup olmadığımızı kontrol eden yardımcı fonksiyon
@@ -31,7 +31,10 @@ const removeStorageItem = (key: string) => {
   localStorage.removeItem(key)
 }
 
-export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps) => {
+export const useTasks = ({
+  initialTasks,
+  initialCompletedTasks,
+}: UseTasksProps) => {
   // localStorage'dan verileri al veya varsayılan değerleri kullan
   const [tasks, setTasks] = useState<Task[]>(() => {
     const savedTasks = getStorageItem(STORAGE_KEYS.TASKS)
@@ -40,10 +43,14 @@ export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps)
 
   const [completedTasks, setCompletedTasks] = useState<Task[]>(() => {
     const savedCompletedTasks = getStorageItem(STORAGE_KEYS.COMPLETED_TASKS)
-    return savedCompletedTasks ? JSON.parse(savedCompletedTasks) : initialCompletedTasks
+    return savedCompletedTasks
+      ? JSON.parse(savedCompletedTasks)
+      : initialCompletedTasks
   })
 
-  const [expandedTasks, setExpandedTasks] = useState<{ [key: string]: boolean }>(() => {
+  const [expandedTasks, setExpandedTasks] = useState<{
+    [key: string]: boolean
+  }>(() => {
     const savedExpandedTasks = getStorageItem(STORAGE_KEYS.EXPANDED_TASKS)
     return savedExpandedTasks ? JSON.parse(savedExpandedTasks) : {}
   })
@@ -68,22 +75,24 @@ export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps)
     }))
   }
 
-  const addTask = (taskData: Omit<Task, "id" | "createdAt" | "updatedAt" | "createdBy">) => {
+  const addTask = (
+    taskData: Omit<Task, "id" | "createdAt" | "updatedAt" | "createdBy">
+  ) => {
     const now = new Date().toISOString()
     const createdBy = {
       id: "1",
       name: "Ali Yılmaz",
-      avatar: "https://i.pravatar.cc/150?img=1"
+      avatar: "https://i.pravatar.cc/150?img=1",
     }
 
     // Alt görevleri ana görevin subTasks özelliğine ekle
-    const subTasks = taskData.subTasks?.map(subTask => ({
+    const subTasks = taskData.subTasks?.map((subTask) => ({
       ...subTask,
       id: Math.random().toString(36).substr(2, 9),
       status: "progress" as const,
       createdAt: now,
       updatedAt: now,
-      createdBy
+      createdBy,
     })) as Task[] | undefined
 
     const newTask: Task = {
@@ -93,13 +102,13 @@ export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps)
       createdAt: now,
       updatedAt: now,
       createdBy,
-      subTasks
+      subTasks,
     }
 
     // Yeni görevi ekledikten sonra otomatik olarak genişlet
     setExpandedTasks((prev) => ({
       ...prev,
-      [newTask.id]: true
+      [newTask.id]: true,
     }))
 
     setTasks((prevTasks) => [...prevTasks, newTask])
@@ -109,19 +118,17 @@ export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps)
     setTasks((prevTasks) =>
       prevTasks.map((task) => {
         // Alt görevleri kontrol et
-        if (task.subTasks?.some(subTask => subTask.id === taskId)) {
+        if (task.subTasks?.some((subTask) => subTask.id === taskId)) {
           // Alt görev güncelleniyor
           return {
             ...task,
-            subTasks: task.subTasks.map(subTask =>
-              subTask.id === taskId
-                ? { ...subTask, ...data }
-                : subTask
+            subTasks: task.subTasks.map((subTask) =>
+              subTask.id === taskId ? { ...subTask, ...data } : subTask
             ),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           }
         }
-        
+
         // Ana görev güncelleniyor
         if (task.id === taskId) {
           return { ...task, ...data }
@@ -134,24 +141,28 @@ export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps)
 
   const deleteTask = (taskId: string) => {
     setTasks((prevTasks) => {
-      return prevTasks.map(task => {
-        // Alt görevleri kontrol et
-        if (task.subTasks?.some(subTask => subTask.id === taskId)) {
-          // Alt görev siliniyorsa, ana görevin alt görevlerini güncelle
-          return {
-            ...task,
-            subTasks: task.subTasks.filter(subTask => subTask.id !== taskId),
-            updatedAt: new Date().toISOString()
+      return prevTasks
+        .map((task) => {
+          // Alt görevleri kontrol et
+          if (task.subTasks?.some((subTask) => subTask.id === taskId)) {
+            // Alt görev siliniyorsa, ana görevin alt görevlerini güncelle
+            return {
+              ...task,
+              subTasks: task.subTasks.filter(
+                (subTask) => subTask.id !== taskId
+              ),
+              updatedAt: new Date().toISOString(),
+            }
           }
-        }
-        
-        // Ana görev siliniyorsa
-        if (task.id === taskId) {
-          return null
-        }
 
-        return task
-      }).filter((task): task is Task => task !== null)
+          // Ana görev siliniyorsa
+          if (task.id === taskId) {
+            return null
+          }
+
+          return task
+        })
+        .filter((task): task is Task => task !== null)
     })
   }
 
@@ -159,7 +170,10 @@ export const useTasks = ({ initialTasks, initialCompletedTasks }: UseTasksProps)
     const taskToMove = tasks.find((task) => task.id === taskId)
     if (taskToMove) {
       setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId))
-      setCompletedTasks((prevCompleted) => [...prevCompleted, { ...taskToMove, status: "completed" }])
+      setCompletedTasks((prevCompleted) => [
+        ...prevCompleted,
+        { ...taskToMove, status: "completed" },
+      ])
     }
   }
 

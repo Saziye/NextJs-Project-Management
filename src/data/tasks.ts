@@ -1,5 +1,15 @@
 import { Task } from "@/types/task"
 
+// Sabit kullanıcı bilgisi
+const defaultCreator = {
+  id: "user1",
+  name: "Ali Yılmaz",
+  avatar: "https://i.pravatar.cc/150?img=1",
+}
+
+// Sabit tarih bilgileri
+const now = new Date().toISOString()
+
 export const initialTasks: Task[] = [
   {
     id: "1",
@@ -31,7 +41,9 @@ export const initialTasks: Task[] = [
     startDate: "2024-11-14",
     dueDate: "2024-11-24",
     priority: "high",
-    expanded: true,
+    createdAt: now,
+    updatedAt: now,
+    createdBy: defaultCreator,
     subTasks: [
       {
         id: "1-1",
@@ -53,6 +65,9 @@ export const initialTasks: Task[] = [
         startDate: "2024-11-20",
         dueDate: "2024-11-25",
         priority: "medium",
+        createdAt: now,
+        updatedAt: now,
+        createdBy: defaultCreator,
       },
       {
         id: "1-2",
@@ -79,6 +94,9 @@ export const initialTasks: Task[] = [
         startDate: "2024-11-22",
         dueDate: "2024-11-28",
         priority: "low",
+        createdAt: now,
+        updatedAt: now,
+        createdBy: defaultCreator,
       },
       {
         id: "1-3",
@@ -100,6 +118,9 @@ export const initialTasks: Task[] = [
         startDate: "2024-11-23",
         dueDate: "2024-11-30",
         priority: "medium",
+        createdAt: now,
+        updatedAt: now,
+        createdBy: defaultCreator,
       },
     ],
   },
@@ -133,6 +154,9 @@ export const initialTasks: Task[] = [
     startDate: "2024-11-16",
     dueDate: "2024-11-26",
     priority: "high",
+    createdAt: now,
+    updatedAt: now,
+    createdBy: defaultCreator,
   },
   {
     id: "3",
@@ -159,6 +183,9 @@ export const initialTasks: Task[] = [
     startDate: "2024-11-20",
     dueDate: "2024-11-28",
     priority: "medium",
+    createdAt: now,
+    updatedAt: now,
+    createdBy: defaultCreator,
   },
 ]
 
@@ -193,6 +220,9 @@ export const completedTasks: Task[] = [
     startDate: "2024-11-14",
     dueDate: "2024-11-24",
     priority: "high",
+    createdAt: now,
+    updatedAt: now,
+    createdBy: defaultCreator,
     subTasks: [
       {
         id: "4-1",
@@ -214,6 +244,9 @@ export const completedTasks: Task[] = [
         startDate: "2024-11-14",
         dueDate: "2024-11-15",
         priority: "high",
+        createdAt: now,
+        updatedAt: now,
+        createdBy: defaultCreator,
       },
       {
         id: "4-2",
@@ -235,6 +268,9 @@ export const completedTasks: Task[] = [
         startDate: "2024-11-16",
         dueDate: "2024-11-17",
         priority: "medium",
+        createdAt: now,
+        updatedAt: now,
+        createdBy: defaultCreator,
       },
     ],
   },
@@ -263,5 +299,8 @@ export const completedTasks: Task[] = [
     startDate: "2024-11-16",
     dueDate: "2024-11-28",
     priority: "high",
+    createdAt: now,
+    updatedAt: now,
+    createdBy: defaultCreator,
   },
 ]
