@@ -19,7 +19,6 @@ import {
 } from "lucide-react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/atoms/Button/Button"
-import { TaskCard } from "@/components/molecules/TaskCard/TaskCard"
 import { TaskModal } from "@/components/molecules/TaskModal/TaskModal"
 import { TaskTemplateModal } from "@/components/molecules/TaskTemplateModal/TaskTemplateModal"
 import { Task, TaskTemplate, TaskUser } from "@/types/task"
@@ -28,6 +27,8 @@ import { cn } from "@/lib/utils"
 import axios from "axios"
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import { toast } from "react-hot-toast"
+import Image from "next/image"
+import { TaskFormValues } from "@/components/molecules/TaskForm/TaskForm"
 
 // API fonksiyonları
 const api = {
@@ -77,6 +78,10 @@ interface TaskListProps {
   expandedTasks: { [key: string]: boolean }
   onToggleExpand: (taskId: string) => void
   className?: string
+  onCreateTask?: (taskData: Omit<Task, "id" | "createdAt" | "updatedAt" | "createdBy">) => void
+  onUpdateTask?: (taskId: string, data: Partial<Task>) => void 
+  onMoveTask?: (taskId: string) => void
+  onDeleteTask?: (taskId: string) => void
 }
 
 const users: TaskUser[] = [
@@ -94,6 +99,10 @@ export const TaskList = ({
   expandedTasks,
   onToggleExpand,
   className,
+  onCreateTask,
+  onUpdateTask,
+  onMoveTask,
+  onDeleteTask,
 }: TaskListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false)
@@ -109,6 +118,7 @@ export const TaskList = ({
     initialData: initialTasks,
     // Veri 5 dakika boyunca güncel kabul edilir
     staleTime: 1000 * 60 * 5,
+   
   })
 
   // Görev oluştur
@@ -171,27 +181,54 @@ export const TaskList = ({
     setIsModalOpen(false)
   }
 
-  const handleSubmit = (data: any) => {
-    if (selectedTask) {
-      updateTaskMutation.mutate({
-        id: selectedTask.id,
-        ...data,
-      })
-    } else {
-      createTaskMutation.mutate(data)
+  const handleSubmit = (data: TaskFormValues) => {
+    console.log("TaskList - Form gönderildi:", data); // Debug için
+    
+    try {
+      if (selectedTask) {
+        if (onUpdateTask) {
+          console.log("TaskList - Görev güncelleniyor:", selectedTask.id, data); // Debug için
+          onUpdateTask(selectedTask.id, data);
+          toast.success("Görev başarıyla güncellendi!");
+        } else {
+          updateTaskMutation.mutate({
+            id: selectedTask.id,
+            ...data,
+          });
+        }
+      } else {
+        if (onCreateTask) {
+          console.log("TaskList - Yeni görev oluşturuluyor:", data); // Debug için
+          onCreateTask({
+            ...data,
+            status: "progress"
+          });
+          toast.success("Görev başarıyla oluşturuldu!");
+        } else {
+          createTaskMutation.mutate({
+            ...data,
+            status: "progress"
+          });
+        }
+      }
+      
+      // Modal'ı kapat
+      handleCloseModal();
+    } catch (error) {
+      console.error("Görev işlemi sırasında hata oluştu:", error);
+      toast.error("İşlem sırasında bir hata oluştu!");
     }
-    handleCloseModal()
-  }
-
-  const handleDeleteTask = (taskId: string) => {
-    deleteTaskMutation.mutate(taskId)
   }
 
   const handleMoveTask = (
     taskId: string,
     newStatus: "progress" | "completed"
   ) => {
-    moveTaskMutation.mutate({ id: taskId, newStatus })
+    if (onMoveTask && newStatus === "completed") {
+      onMoveTask(taskId);
+    } else {
+      moveTaskMutation.mutate({ id: taskId, newStatus });
+    }
   }
 
   const handleSelectTemplate = (template: TaskTemplate) => {
@@ -230,7 +267,11 @@ export const TaskList = ({
         subTasks: subTasks as Task[] | undefined,
       }
 
-    createTaskMutation.mutate(newTask)
+    if (onCreateTask) {
+      onCreateTask(newTask);
+    } else {
+      createTaskMutation.mutate(newTask);
+    }
     setIsTemplateModalOpen(false)
   }
 
@@ -272,6 +313,14 @@ export const TaskList = ({
           : "completed"
 
       handleMoveTask(draggableId, newStatus)
+    }
+  }
+
+  const handleDeleteTask = (taskId: string) => {
+    if (onDeleteTask) {
+      onDeleteTask(taskId);
+    } else {
+      deleteTaskMutation.mutate(taskId);
     }
   }
 
@@ -389,11 +438,9 @@ export const TaskList = ({
               {isLoading ? (
                 <tbody className="divide-y divide-gray-100">
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-gray-500">
-                      <div className="flex flex-col items-center">
-                        <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
+                    <td colSpan={6} className="py-8 text-center text-gray-500 flex flex-col items-center">
+                        <span className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></span>
                         <p className="mt-2">Yükleniyor...</p>
-                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -407,7 +454,7 @@ export const TaskList = ({
                           : "droppable-progress"
                       }
                     >
-                      {(provided, snapshot) => (
+                      {(provided) => (
                         <React.Fragment>
                           <tr style={{ display: "none" }}>
                             <td
@@ -429,8 +476,7 @@ export const TaskList = ({
                                     {...dragProvided.dragHandleProps}
                                     className={`${dragSnapshot.isDragging ? "opacity-60" : ""}`}
                                   >
-                                    <td className="w-[40%] py-3 pl-4">
-                                      <div className="flex items-center space-x-2">
+                                    <td className="w-[40%] py-3 pl-4 flex items-center space-x-2">
                                         <button
                                           onClick={() =>
                                             task.subTasks &&
@@ -445,8 +491,8 @@ export const TaskList = ({
                                             <ChevronRight className="h-5 w-5" />
                                           )}
                                         </button>
-                                        <div>
-                                          <div className="flex items-center space-x-2">
+                                        <span>
+                                          <span className="flex items-center space-x-2">
                                             {task.status === "completed" ? (
                                               <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                                             ) : (
@@ -466,45 +512,46 @@ export const TaskList = ({
                                                 {task.category}
                                               </span>
                                             )}
-                                          </div>
+                                          </span>
                                           <p className="mt-1 line-clamp-1 text-sm text-gray-500">
                                             {task.description}
                                           </p>
-                                        </div>
-                                      </div>
+                                        </span>
                                     </td>
                                     <td className="w-[15%] py-3">
                                       {task.assignees &&
                                         task.assignees.length > 0 && (
-                                          <div className="group flex items-center">
-                                            <div className="flex -space-x-2">
+                                          <span className="group flex items-center">
+                                            <span className="flex -space-x-2">
                                               {task.assignees
                                                 .slice(0, 3)
                                                 .map((assignee) => (
-                                                  <img
+                                                  <Image
                                                     key={assignee.id}
+                                                    width={32}
+                                                    height={32}
                                                     src={assignee.avatar}
                                                     alt={assignee.name}
                                                     className="h-8 w-8 rounded-full border-2 border-white shadow-sm ring-2 ring-transparent transition-all hover:z-10 hover:ring-indigo-200"
                                                     title={assignee.name}
                                                   />
                                                 ))}
-                                            </div>
+                                            </span>
                                             {task.assignees.length > 3 && (
                                               <span className="ml-1 rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
                                                 +{task.assignees.length - 3}
                                               </span>
                                             )}
-                                          </div>
+                                          </span>
                                         )}
                                     </td>
                                     <td className="w-[12%] py-3 text-sm text-gray-500">
-                                      <div className="flex items-center">
+                                      <span className="flex items-center">
                                         <Clock className="mr-1 h-4 w-4 text-gray-400" />
                                         {new Date(
                                           task.startDate
                                         ).toLocaleDateString("tr-TR")}
-                                      </div>
+                                      </span>
                                     </td>
                                     <td className="w-[10%] py-3">
                                       <span
@@ -525,15 +572,15 @@ export const TaskList = ({
                                       </span>
                                     </td>
                                     <td className="w-[12%] py-3 text-sm text-gray-500">
-                                      <div className="flex items-center">
+                                      <span className="flex items-center">
                                         <CalendarDays className="mr-1 h-4 w-4 text-gray-400" />
                                         {new Date(
                                           task.dueDate
                                         ).toLocaleDateString("tr-TR")}
-                                      </div>
+                                      </span>
                                     </td>
                                     <td className="w-[11%] py-3">
-                                      <div className="flex items-center space-x-1">
+                                      <span className="flex items-center space-x-1">
                                         <Button
                                           variant="ghost"
                                           size="sm"
@@ -545,9 +592,7 @@ export const TaskList = ({
                                         <Button
                                           variant="ghost"
                                           size="sm"
-                                          onClick={() =>
-                                            deleteTaskMutation.mutate(task.id)
-                                          }
+                                          onClick={() => handleDeleteTask(task.id)}
                                           className="rounded-full transition-colors hover:bg-red-50 hover:text-red-600"
                                         >
                                           <Trash2 className="h-4 w-4" />
@@ -567,7 +612,7 @@ export const TaskList = ({
                                         >
                                           <CheckCircle2 className="h-4 w-4" />
                                         </Button>
-                                      </div>
+                                      </span>
                                     </td>
                                   </tr>
                                 )}
@@ -585,8 +630,7 @@ export const TaskList = ({
               ) : (
                 <tbody className="divide-y divide-gray-100">
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-gray-500">
-                      <div className="flex flex-col items-center">
+                    <td colSpan={6} className="py-8 text-center text-gray-500 flex flex-col items-center">
                         <Inbox className="mb-2 h-12 w-12 text-gray-300" />
                         <p>Henüz görev bulunmuyor</p>
                         {!isCompleted && (
@@ -600,7 +644,6 @@ export const TaskList = ({
                             Görev Ekle
                           </Button>
                         )}
-                      </div>
                     </td>
                   </tr>
                 </tbody>

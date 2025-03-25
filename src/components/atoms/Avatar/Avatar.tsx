@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-
+import Image from "next/image"
 interface AvatarProps {
   src: string
   alt: string
@@ -25,7 +25,9 @@ export const Avatar = ({
 
   return (
     <div className={cn("group/avatar relative", className)}>
-      <img
+      <Image
+        width={32}
+        height={32}
         src={src}
         alt={alt}
         className={cn(

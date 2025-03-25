@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server"
 import { initialTasks, completedTasks } from "@/data/tasks"
 import { Task } from "@/types/task"
 
-// Global namespace tanımlaması
+// TypeScript için global interface genişletme
 declare global {
+  // eslint-disable-next-line no-var
   var tasks: {
     progress: Task[]
     completed: Task[]
-  }
+  } | undefined
 }
 
 // Bellek içinde görevleri saklamak için (gerçek uygulamada bir veritabanı kullanılır)
@@ -32,13 +33,13 @@ export async function GET(request: NextRequest) {
         )
       }
 
-      return NextResponse.json(global.tasks[status])
+      return NextResponse.json(global.tasks![status])
     }
 
     // Status belirtilmediyse tüm görevleri döndür
     return NextResponse.json([
-      ...global.tasks.progress,
-      ...global.tasks.completed,
+      ...global.tasks!.progress,
+      ...global.tasks!.completed,
     ])
   } catch (error) {
     console.error("Görevler getirilirken hata oluştu:", error)
@@ -88,9 +89,9 @@ export async function POST(request: NextRequest) {
 
     // Görevi uygun listeye ekle
     if (newTask.status === "completed") {
-      global.tasks.completed.push(newTask)
+      global.tasks!.completed.push(newTask)
     } else {
-      global.tasks.progress.push(newTask)
+      global.tasks!.progress.push(newTask)
     }
 
     return NextResponse.json(newTask, { status: 201 })

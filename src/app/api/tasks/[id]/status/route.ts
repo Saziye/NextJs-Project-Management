@@ -1,4 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
+import { Task } from "@/types/task"
+
+// TypeScript için global interface genişletme
+declare global {
+  // eslint-disable-next-line no-var
+  var tasks: {
+    progress: Task[]
+    completed: Task[]
+  } | undefined
+}
 
 // Görev durumunu güncelle
 export async function PATCH(
@@ -21,12 +31,12 @@ export async function PATCH(
     const now = new Date().toISOString()
 
     // Progress listesinde ara
-    const progressTaskIndex = global.tasks.progress.findIndex(
+    const progressTaskIndex = global.tasks!.progress.findIndex(
       (task) => task.id === id
     )
 
     if (progressTaskIndex !== -1) {
-      const task = global.tasks.progress[progressTaskIndex]
+      const task = global.tasks!.progress[progressTaskIndex]
 
       // Eğer durum zaten aynıysa, sadece güncelleme tarihini değiştir
       if (task.status === status) {
@@ -39,19 +49,19 @@ export async function PATCH(
       task.updatedAt = now
 
       // Listeyi güncelle
-      global.tasks.progress.splice(progressTaskIndex, 1)
-      global.tasks.completed.push(task)
+      global.tasks!.progress.splice(progressTaskIndex, 1)
+      global.tasks!.completed.push(task)
 
       return NextResponse.json(task)
     }
 
     // Completed listesinde ara
-    const completedTaskIndex = global.tasks.completed.findIndex(
+    const completedTaskIndex = global.tasks!.completed.findIndex(
       (task) => task.id === id
     )
 
     if (completedTaskIndex !== -1) {
-      const task = global.tasks.completed[completedTaskIndex]
+      const task = global.tasks!.completed[completedTaskIndex]
 
       // Eğer durum zaten aynıysa, sadece güncelleme tarihini değiştir
       if (task.status === status) {
@@ -64,8 +74,8 @@ export async function PATCH(
       task.updatedAt = now
 
       // Listeyi güncelle
-      global.tasks.completed.splice(completedTaskIndex, 1)
-      global.tasks.progress.push(task)
+      global.tasks!.completed.splice(completedTaskIndex, 1)
+      global.tasks!.progress.push(task)
 
       return NextResponse.json(task)
     }

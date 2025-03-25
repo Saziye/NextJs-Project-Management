@@ -15,7 +15,7 @@ import { Task } from "@/types/task"
 import { Button } from "@/components/atoms/Button/Button"
 import { cn } from "@/lib/utils"
 import { useRef, useState, useEffect } from "react"
-
+import Image from "next/image"
 interface TaskCardProps {
   task: Task
   isExpanded: boolean
@@ -41,7 +41,8 @@ export const TaskCard = ({
 
   // Sunucu tarafında ve istemci tarafında uyum sağlamak için
   useEffect(() => {
-    setIsClient(true)
+    setIsClient(true);
+    console.log('TASK**', task)
   }, [])
 
   const formatDate = (date: string) => {
@@ -170,7 +171,9 @@ export const TaskCard = ({
             <div className="group flex items-center">
               <div className="flex -space-x-2">
                 {task.assignees.slice(0, 3).map((assignee) => (
-                  <img
+                  <Image
+                    width={32}
+                    height={32}
                     key={assignee.id}
                     src={assignee.avatar}
                     alt={assignee.name}
@@ -258,7 +261,7 @@ export const TaskCard = ({
       {/* Alt görevler */}
       {hasSubTasks && isExpanded && task.subTasks && (
         <div className="relative ml-9 space-y-2 border-l-2 border-indigo-100 pb-1 pl-6 pt-2">
-          {task.subTasks.map((subTask, index) => (
+          {task.subTasks.map((subTask) => (
             <div
               key={subTask.id}
               draggable
@@ -295,7 +298,9 @@ export const TaskCard = ({
                   {subTask.assignees && subTask.assignees.length > 0 && (
                     <div className="flex -space-x-1">
                       {subTask.assignees.slice(0, 2).map((assignee) => (
-                        <img
+                        <Image
+                          width={32}
+                          height={32}
                           key={assignee.id}
                           src={assignee.avatar}
                           alt={assignee.name}

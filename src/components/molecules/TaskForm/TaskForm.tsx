@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { CalendarIcon, X, Check, AlertCircle } from "lucide-react"
+import { CalendarIcon, Check, AlertCircle } from "lucide-react"
 import { TaskUser, Task, TaskPriority } from "@/types/task"
 import { Button } from "@/components/atoms/Button/Button"
 import { cn } from "@/lib/utils"
-
+import Image from "next/image"
 // Zod şeması ile form validasyonu
 const taskSchema = z.object({
   title: z
@@ -39,7 +39,7 @@ const taskSchema = z.object({
 })
 
 // Form değerleri tipi
-type TaskFormValues = z.infer<typeof taskSchema>
+export type TaskFormValues = z.infer<typeof taskSchema>
 
 interface TaskFormProps {
   task?: Task
@@ -89,9 +89,42 @@ export const TaskForm = ({
         },
   })
 
+  // Form açıldığında veya task değiştiğinde formu sıfırla
+  useEffect(() => {
+    console.log("TaskForm useEffect tetiklendi, form sıfırlanıyor...");
+    if (task) {
+      console.log("Düzenleme modu: form verilerle dolduruluyor", task);
+      reset({
+        title: task.title,
+        description: task.description,
+        startDate: task.startDate,
+        dueDate: task.dueDate,
+        priority: task.priority,
+        assignees: task.assignees || [],
+        category: task.category || "development",
+      });
+    } else {
+      console.log("Yeni görev modu: form sıfırlanıyor");
+      reset({
+        title: "",
+        description: "",
+        startDate: new Date().toISOString().split("T")[0],
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
+        priority: "medium" as TaskPriority,
+        assignees: [],
+        category: "development",
+      });
+    }
+    setErrors({});
+  }, [task, reset]);
+
   // Form gönderme işlemi
   const handleFormSubmit = async (data: TaskFormValues) => {
     try {
+      console.log("Form gönderiliyor:", data); // Debug için
+
       // Tarihleri kontrol et
       const startDate = new Date(data.startDate)
       const dueDate = new Date(data.dueDate)
@@ -100,9 +133,32 @@ export const TaskForm = ({
         setErrors({ dueDate: "Bitiş tarihi başlangıç tarihinden önce olamaz" })
         return
       }
+      
+      // Assign ettiğimiz kullanıcıları tekrar kontrol et
+      if (!data.assignees || data.assignees.length === 0) {
+        setErrors({ assignees: "En az bir kişi atanmalıdır" })
+        return
+      }
 
+      // Submit işlemi
+      console.log("Form onSubmit çağrılıyor", data);
       onSubmit(data)
-      reset()
+      
+      // Form sıfırlama
+      console.log("Form reset ediliyor");
+      reset({
+        title: "",
+        description: "",
+        startDate: new Date().toISOString().split("T")[0],
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
+        priority: "medium" as TaskPriority,
+        assignees: [],
+        category: "development",
+      });
+      setErrors({});
+      
     } catch (error) {
       console.error("Form gönderimi sırasında hata oluştu:", error)
     }
@@ -294,41 +350,50 @@ export const TaskForm = ({
             render={({ field }) => (
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {users.map((user) => (
-                    <label
-                      key={user.id}
-                      className={cn(
-                        "flex cursor-pointer items-center space-x-2 rounded-lg border border-gray-200 px-3 py-2 text-sm",
-                        field.value.some((a) => a.id === user.id)
-                          ? "border-indigo-200 bg-indigo-50 text-indigo-700"
-                          : "text-gray-700 hover:bg-gray-50"
-                      )}
-                    >
-                      <input
-                        type="checkbox"
-                        className="sr-only"
-                        checked={field.value.some((a) => a.id === user.id)}
-                        onChange={() => {
-                          if (field.value.some((a) => a.id === user.id)) {
-                            field.onChange(
-                              field.value.filter((a) => a.id !== user.id)
-                            )
-                          } else {
-                            field.onChange([...field.value, user])
-                          }
-                        }}
-                      />
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="h-6 w-6 rounded-full object-cover"
-                      />
-                      <span>{user.name}</span>
-                      {field.value.some((a) => a.id === user.id) && (
-                        <Check className="h-4 w-4 text-indigo-600" />
-                      )}
-                    </label>
-                  ))}
+                  {users.map((user) => {
+                    const isChecked = field.value.some((a) => a.id === user.id);
+                    console.log(`User ${user.name} checked:`, isChecked); // Debug için
+                    return (
+                      <label
+                        key={user.id}
+                        className={cn(
+                          "flex cursor-pointer items-center space-x-2 rounded-lg border border-gray-200 px-3 py-2 text-sm",
+                          isChecked
+                            ? "border-indigo-200 bg-indigo-50 text-indigo-700"
+                            : "text-gray-700 hover:bg-gray-50"
+                        )}
+                      >
+                        <input
+                          type="checkbox"
+                          className="sr-only"
+                          checked={isChecked}
+                          onChange={() => {
+                            console.log("Checkbox state before change:", field.value); // Debug için
+                            if (isChecked) {
+                              const newValue = field.value.filter((a) => a.id !== user.id);
+                              console.log("Removing user, new value:", newValue); // Debug için
+                              field.onChange(newValue);
+                            } else {
+                              const newValue = [...field.value, user];
+                              console.log("Adding user, new value:", newValue); // Debug için
+                              field.onChange(newValue);
+                            }
+                          }}
+                        />
+                        <Image
+                          width={32}
+                          height={32}
+                          src={user.avatar}
+                          alt={user.name}
+                          className="h-6 w-6 rounded-full object-cover"
+                        />
+                        <span>{user.name}</span>
+                        {isChecked && (
+                          <Check className="h-4 w-4 text-indigo-600" />
+                        )}
+                      </label>
+                    );
+                  })}
                 </div>
                 {getErrorMessage("assignees") && (
                   <p className="flex items-center text-xs text-red-500">

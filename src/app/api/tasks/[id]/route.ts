@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Task } from "@/types/task"
 
-// Bellek içinde görevleri saklamak için - dışarıdan erişim
+// TypeScript için global interface genişletme
 declare global {
+  // eslint-disable-next-line no-var
   var tasks: {
     progress: Task[]
     completed: Task[]
-  }
+  } | undefined
 }
 
 // Tek bir görevi görüntüle
@@ -18,8 +19,8 @@ export async function GET(
     const id = params.id
 
     // Her iki listede de ara
-    const progressTask = global.tasks.progress.find((task) => task.id === id)
-    const completedTask = global.tasks.completed.find((task) => task.id === id)
+    const progressTask = global.tasks!.progress.find((task) => task.id === id)
+    const completedTask = global.tasks!.completed.find((task) => task.id === id)
 
     const task = progressTask || completedTask
 
@@ -61,48 +62,48 @@ export async function PATCH(
     const now = new Date().toISOString()
 
     // İlk olarak progress listesinde ara
-    const progressTaskIndex = global.tasks.progress.findIndex(
+    const progressTaskIndex = global.tasks!.progress.findIndex(
       (task) => task.id === id
     )
 
     if (progressTaskIndex !== -1) {
       // Görevi güncelle
       const updatedTask = {
-        ...global.tasks.progress[progressTaskIndex],
+        ...global.tasks!.progress[progressTaskIndex],
         ...updates,
         updatedAt: now,
       }
 
       // Eğer durum değiştiyse, doğru listeye taşı
       if (updates.status === "completed") {
-        global.tasks.progress.splice(progressTaskIndex, 1)
-        global.tasks.completed.push(updatedTask)
+        global.tasks!.progress.splice(progressTaskIndex, 1)
+        global.tasks!.completed.push(updatedTask)
       } else {
-        global.tasks.progress[progressTaskIndex] = updatedTask
+        global.tasks!.progress[progressTaskIndex] = updatedTask
       }
 
       return NextResponse.json(updatedTask)
     }
 
     // Eğer progress listesinde bulunamazsa, completed listesinde ara
-    const completedTaskIndex = global.tasks.completed.findIndex(
+    const completedTaskIndex = global.tasks!.completed.findIndex(
       (task) => task.id === id
     )
 
     if (completedTaskIndex !== -1) {
       // Görevi güncelle
       const updatedTask = {
-        ...global.tasks.completed[completedTaskIndex],
+        ...global.tasks!.completed[completedTaskIndex],
         ...updates,
         updatedAt: now,
       }
 
       // Eğer durum değiştiyse, doğru listeye taşı
       if (updates.status === "progress") {
-        global.tasks.completed.splice(completedTaskIndex, 1)
-        global.tasks.progress.push(updatedTask)
+        global.tasks!.completed.splice(completedTaskIndex, 1)
+        global.tasks!.progress.push(updatedTask)
       } else {
-        global.tasks.completed[completedTaskIndex] = updatedTask
+        global.tasks!.completed[completedTaskIndex] = updatedTask
       }
 
       return NextResponse.json(updatedTask)
@@ -130,24 +131,24 @@ export async function DELETE(
     const id = params.id
 
     // İlk olarak progress listesinde ara
-    const progressTaskIndex = global.tasks.progress.findIndex(
+    const progressTaskIndex = global.tasks!.progress.findIndex(
       (task) => task.id === id
     )
 
     if (progressTaskIndex !== -1) {
       // Görevi sil
-      global.tasks.progress.splice(progressTaskIndex, 1)
+      global.tasks!.progress.splice(progressTaskIndex, 1)
       return new NextResponse(null, { status: 204 })
     }
 
     // Eğer progress listesinde bulunamazsa, completed listesinde ara
-    const completedTaskIndex = global.tasks.completed.findIndex(
+    const completedTaskIndex = global.tasks!.completed.findIndex(
       (task) => task.id === id
     )
 
     if (completedTaskIndex !== -1) {
       // Görevi sil
-      global.tasks.completed.splice(completedTaskIndex, 1)
+      global.tasks!.completed.splice(completedTaskIndex, 1)
       return new NextResponse(null, { status: 204 })
     }
 

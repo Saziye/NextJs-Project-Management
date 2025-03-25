@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Sidebar from "./Sidebar"
+import Image from "next/image"
 import {
   Bell,
   Search,
@@ -25,8 +26,9 @@ export default function Layout({ children }: LayoutProps) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [unreadNotifications, setUnreadNotifications] = useState(3)
-  const [unreadMessages, setUnreadMessages] = useState(5)
+  // Şimdilik kullanılmayan state değişkenleri, ihtiyaç olduğunda yeniden etkinleştir
+  const [unreadNotifications] = useState(3)
+  const [unreadMessages] = useState(5)
 
   // Sayfa kaydırılınca başlık çubuğunun görünümünü değiştirme
   useEffect(() => {
@@ -152,9 +154,11 @@ export default function Layout({ children }: LayoutProps) {
 
             {/* User Profile */}
             <div className="ml-1 flex cursor-pointer items-center rounded-lg px-1 py-1 hover:bg-gray-100">
-              <img
+              <Image
                 src="https://i.pravatar.cc/150?img=12"
                 alt="User"
+                width={32}
+                height={32}
                 className="h-8 w-8 rounded-lg border border-gray-200"
               />
               <div className="ml-2 hidden md:block">

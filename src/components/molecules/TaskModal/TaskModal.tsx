@@ -1,17 +1,18 @@
 "use client"
 
 import { Dialog, Transition } from "@headlessui/react"
-import { Fragment } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { X } from "lucide-react"
 import { TaskForm } from "@/components/molecules/TaskForm/TaskForm"
 import { Task, TaskUser } from "@/types/task"
+import type { TaskFormValues } from "@/components/molecules/TaskForm/TaskForm"
 
 interface TaskModalProps {
   isOpen: boolean
   onClose: () => void
   task?: Task
   users: TaskUser[]
-  onSubmit: (data: any) => void
+  onSubmit: (data: TaskFormValues) => void
 }
 
 export const TaskModal = ({
@@ -21,6 +22,23 @@ export const TaskModal = ({
   users,
   onSubmit,
 }: TaskModalProps) => {
+  const [formKey, setFormKey] = useState(0);
+
+  useEffect(() => {
+    // Modal açıldığında formu sıfırla
+    if (isOpen) {
+      console.log("TaskModal açıldı, form sıfırlanacak", { task });
+      // Form bileşenini yeniden oluşturmak için key değerini değiştir
+      setFormKey(prev => prev + 1);
+    }
+  }, [isOpen, task]);
+
+  // Form gönderildiğinde
+  const handleSubmit = (data: TaskFormValues) => {
+    console.log("TaskModal - form gönderildi:", data);
+    onSubmit(data);
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -65,9 +83,10 @@ export const TaskModal = ({
                 </div>
 
                 <TaskForm
+                  key={formKey}
                   task={task}
                   users={users}
-                  onSubmit={onSubmit}
+                  onSubmit={handleSubmit}
                   onCancel={onClose}
                 />
               </Dialog.Panel>

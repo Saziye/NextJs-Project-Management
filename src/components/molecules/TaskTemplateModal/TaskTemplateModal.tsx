@@ -6,7 +6,7 @@ import { X } from "lucide-react"
 import { TaskTemplate } from "@/types/task"
 import { Button } from "@/components/atoms/Button/Button"
 import { cn } from "@/lib/utils"
-
+import Image from "next/image"
 interface TaskTemplateModalProps {
   isOpen: boolean
   onClose: () => void
@@ -112,8 +112,10 @@ export const TaskTemplateModal = ({
                         <div className="flex items-center space-x-4">
                           <div className="flex -space-x-2">
                             {template.defaultAssignees?.map((user) => (
-                              <img
+                              <Image
                                 key={user.id}
+                                width={32}
+                                height={32}
                                 src={user.avatar}
                                 alt={user.name}
                                 className="h-8 w-8 rounded-full border-2 border-white"

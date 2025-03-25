@@ -78,40 +78,60 @@ export const useTasks = ({
   const addTask = (
     taskData: Omit<Task, "id" | "createdAt" | "updatedAt" | "createdBy">
   ) => {
-    const now = new Date().toISOString()
-    const createdBy = {
-      id: "1",
-      name: "Ali Yılmaz",
-      avatar: "https://i.pravatar.cc/150?img=1",
+    try {
+      const now = new Date().toISOString()
+      const taskId = Math.random().toString(36).substr(2, 9);
+      const createdBy = {
+        id: "1",
+        name: "Ali Yılmaz",
+        avatar: "https://i.pravatar.cc/150?img=1",
+      }
+
+      // Alt görevleri ana görevin subTasks özelliğine ekle
+      const subTasks = taskData.subTasks?.map((subTask) => ({
+        ...subTask,
+        id: Math.random().toString(36).substr(2, 9),
+        status: "progress" as const,
+        createdAt: now,
+        updatedAt: now,
+        createdBy,
+      })) as Task[] | undefined
+
+      const newTask: Task = {
+        ...taskData,
+        id: taskId,
+        status: "progress",
+        createdAt: now,
+        updatedAt: now,
+        createdBy,
+        subTasks,
+      }
+
+      console.log("useTasks addTask: yeni görev oluşturuldu:", newTask);
+
+      // Yeni görevi ekledikten sonra otomatik olarak genişlet
+      setExpandedTasks((prev) => {
+        const updated = {
+          ...prev,
+          [newTask.id]: true,
+        };
+        console.log("Expanded tasks güncellendi:", updated);
+        return updated;
+      })
+
+      // Görevleri güncelle
+      setTasks((prevTasks) => {
+        const updated = [...prevTasks, newTask];
+        console.log("Görevler güncellendi:", updated);
+        return updated;
+      })
+      
+      console.log("Görev eklendi:", newTask); // Debug için
+      return newTask;
+    } catch (error) {
+      console.error("Görev eklenirken hata oluştu:", error);
+      throw error;
     }
-
-    // Alt görevleri ana görevin subTasks özelliğine ekle
-    const subTasks = taskData.subTasks?.map((subTask) => ({
-      ...subTask,
-      id: Math.random().toString(36).substr(2, 9),
-      status: "progress" as const,
-      createdAt: now,
-      updatedAt: now,
-      createdBy,
-    })) as Task[] | undefined
-
-    const newTask: Task = {
-      ...taskData,
-      id: Math.random().toString(36).substr(2, 9),
-      status: "progress",
-      createdAt: now,
-      updatedAt: now,
-      createdBy,
-      subTasks,
-    }
-
-    // Yeni görevi ekledikten sonra otomatik olarak genişlet
-    setExpandedTasks((prev) => ({
-      ...prev,
-      [newTask.id]: true,
-    }))
-
-    setTasks((prevTasks) => [...prevTasks, newTask])
   }
 
   const updateTask = (taskId: string, data: Partial<Task>) => {

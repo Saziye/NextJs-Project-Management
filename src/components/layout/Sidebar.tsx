@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   CheckSquare,
   Trello,
-  Calendar,
   Menu,
   X,
   Users,
@@ -23,69 +22,7 @@ import {
   Sparkles,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const menuItems = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-    badge: "",
-  },
-  {
-    title: "Project",
-    href: "/dashboard?tab=todo",
-    icon: CheckSquare,
-    badge: "5",
-  },
-  {
-    title: "Employee",
-    href: "/dashboard?tab=employee",
-    icon: Users,
-    badge: "",
-  },
-  {
-    title: "Payroll",
-    href: "/dashboard?tab=payroll",
-    icon: CreditCard,
-    badge: "",
-  },
-]
-
-const otherItems = [
-  {
-    title: "Schedule",
-    href: "/dashboard?tab=schedule",
-    icon: Clock,
-    badge: "New",
-  },
-  {
-    title: "Open Hiring",
-    href: "/dashboard?tab=hiring",
-    icon: Users,
-    badge: "",
-  },
-  {
-    title: "Integration",
-    href: "/dashboard?tab=integration",
-    icon: Trello,
-    badge: "",
-  },
-]
-
-const preferenceItems = [
-  {
-    title: "Security",
-    href: "/dashboard?tab=security",
-    icon: Settings,
-    badge: "",
-  },
-  {
-    title: "Help Center",
-    href: "/dashboard?tab=help",
-    icon: HelpCircle,
-    badge: "",
-  },
-]
+import Image from "next/image"
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -511,7 +448,9 @@ export default function Sidebar() {
                 </div>
 
                 <div className="flex items-center rounded-lg px-2 py-1.5 hover:bg-gray-50">
-                  <img
+                  <Image
+                    width={32}
+                    height={32}
                     src="https://i.pravatar.cc/150?img=12"
                     alt="User"
                     className="h-8 w-8 rounded-lg border border-gray-200"
@@ -538,7 +477,9 @@ export default function Sidebar() {
                     <Sun className="h-5 w-5 text-gray-500" />
                   )}
                 </button>
-                <img
+                <Image
+                  width={32}
+                  height={32}
                   src="https://i.pravatar.cc/150?img=12"
                   alt="User"
                   className="h-8 w-8 rounded-lg border border-gray-200"

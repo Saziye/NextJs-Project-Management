@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { getWeatherByCoords } from "@/lib/weather"
 import type { WeatherData } from "@/types/weather"
-
+import Image from "next/image"
 const formSchema = z.object({
   email: z.string().email({
     message: "Geçerli bir email adresi giriniz.",
@@ -95,7 +95,9 @@ export default function LoginPage() {
         {weather && !weatherLoading && (
           <div className="mb-6 text-center">
             <div className="flex items-center justify-center">
-              <img
+              <Image
+                width={64}
+                height={64}
                 src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
                 alt={weather.weather[0].description}
                 className="h-16 w-16"
